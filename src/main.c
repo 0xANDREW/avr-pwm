@@ -1,7 +1,5 @@
 #include <avr/io.h>
 #include <avr/interrupt.h>
-#include <util/delay.h>
-#include <avr/wdt.h>
 
 #include <stdio.h>
 
@@ -21,15 +19,18 @@ int main(){
   lcd_init(LCD_DISP_ON);
   millis_init();
 
+  // Initialize PWM stuff
   pwm_init(&pwm_out, &PORTD, PD5, PWM_TIMER1, PWM_CHAN_A, PWM_TRIANGLE, 0,
            128, 10, PWM_DIR_NONE);
 
-  wdt_enable(WDTO_2S);
   sei();
 
   while (1){
+
+    // Must be called at each main loop
     pwm_update(&pwm_out);
 
+    // Write '0' to serial to disable, '1' to enable
     uint16_t d = uart0_getc();
     if ((d >> 8) == 0){
       switch (d){
@@ -42,15 +43,15 @@ int main(){
       }
     }
 
-    sprintf(buf, "%3u", OCR1A);
+    // Show PWM val on LCD
+    sprintf(buf, "%3u", *pwm_out.pwm_val);
     lcd_home();
     lcd_puts(buf);
 
+    // Show runtime
     lcd_gotoxy(0, 1);
     millis_pretty_print(buf2);
     lcd_puts(buf2);
-    
-    wdt_reset();
   }
 
   return 0;
