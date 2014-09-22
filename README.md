@@ -1,3 +1,3 @@
-Boilerplate SCons setup for AVR programming
+Simple 8-bit PWM library for AVR
 
-`main.scons` is used instead of SConstruct so that all the build stuff goes into the `./build` directory to keep it clean
+Only tested with ATmega164A, check out `main.c` for an example.

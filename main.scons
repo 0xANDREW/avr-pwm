@@ -1,20 +1,20 @@
 # MCU code for AVRDUDE/avr-gcc
-MCU = 'atmega2560'
+MCU = 'atmega164a'
 
 # AVRDUDE programmer name
-PROGRAMMER = 'avrisp'
+PROGRAMMER = 'usbtiny'
 
 # Binary outfile name
 OUT = 'main'
 
 # Files to compile
-SRC = Glob('src/*.c')
+SRC = Glob('*/*.c')
 
 # Fuse settings
-FUSE = { 'L': 0xFF, 'H': 0xD7, 'E': 0xFF }
+FUSE = { 'L': 0xCE, 'H': 0xD9, 'E': 0xFF }
 
 # Comm. port (use 'usb' for USBtinyISP/AVR Dragon/etc.)
-PORT = '/dev/ttyUSB0'
+PORT = 'usb'
 
 # AVRDUDE bitrate, varies with programmer
 AVRDUDE_BITRATE = 19200
@@ -23,15 +23,15 @@ AVRDUDE_BITRATE = 19200
 AVRDUDE_CMD = 'avrdude -P %s -c %s -p %s -b %d' % (PORT, PROGRAMMER, MCU, AVRDUDE_BITRATE)
 
 # Optional defines (include in CPPDEFINES below)
-F_CPU = 8000000
+CPPDEFINES = {
+    'F_CPU': 8000000
+}
 
 env = Environment(
     CC         = 'avr-gcc',
     CFLAGS     = '-Wall -Os -mmcu=%s -std=c99 -ffunction-sections -fdata-sections' % MCU,
     LINKFLAGS  = '-mmcu=%s' % MCU,
-    CPPDEFINES = { 
-        'F_CPU': F_CPU
-    }
+    CPPDEFINES = CPPDEFINES
 )
 
 # Upload to flash
